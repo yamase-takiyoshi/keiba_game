@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DERBY OWNER X96 FULL GAME</title>
+<style>
+:root{--ink:#e8e6c9;--blue:#1b3f8b;--gold:#e6c45a;--green:#58d36b;--red:#e84b4b;--win:#101840}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#000;color:var(--ink);font-family:"MS Gothic","Courier New",monospace;overflow:hidden}
+button,input,select{font-family:inherit}
+#screen{width:100vw;height:100vh;position:relative;background:linear-gradient(#071225 0 42%,#183a24 42% 68%,#0d1a13 68% 100%);overflow:hidden}
+#screen:after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.045) 0 1px,transparent 1px 3px),radial-gradient(circle at center,transparent 45%,rgba(0,0,0,.38))}
+.window{border:2px solid #fff;box-shadow:2px 2px 0 #777,4px 4px 0 #000;background:var(--win)}
+.bar{background:#1d4da1;color:#fff;padding:5px 8px;font-weight:bold;border-bottom:2px solid #fff}
+.inner{padding:10px}
+#title{position:absolute;top:5vh;width:100%;text-align:center;z-index:5}
+.small{color:#64d8ff;letter-spacing:4px;text-shadow:2px 2px #000}
+.logo{margin-top:10px;color:var(--gold);font-size:clamp(34px,7vw,84px);line-height:.9;text-shadow:2px 2px #000,4px 4px #6b3600,6px 6px #000}
+.sub{margin-top:12px;color:#fff;text-shadow:2px 2px #000}
+#rail{position:absolute;bottom:38vh;width:100%;height:16px;background:repeating-linear-gradient(90deg,#fff 0 28px,#111 28px 38px);box-shadow:0 4px #000}
+#track{position:absolute;left:-5vw;bottom:13vh;width:110vw;height:28vh;background:repeating-linear-gradient(90deg,#178a32 0 16px,#1ba33b 16px 32px);border-top:5px solid #d1b15b;border-bottom:5px solid #7a5220;transform:skewY(-2deg)}
+.horse{position:absolute;bottom:25vh;left:-170px;width:150px;height:82px;filter:drop-shadow(5px 7px #000);animation:run 7s linear infinite}
+@keyframes run{from{left:-180px}to{left:110vw}}
+.horse .body{position:absolute;left:30px;top:30px;width:76px;height:28px;background:#2b1608}
+.horse .neck{position:absolute;left:92px;top:16px;width:22px;height:38px;background:#2b1608;transform:skewX(-20deg)}
+.horse .head{position:absolute;left:108px;top:10px;width:30px;height:18px;background:#2b1608}
+.horse .tail{position:absolute;left:8px;top:26px;width:30px;height:8px;background:#111;transform:rotate(-25deg)}
+.horse .leg{position:absolute;top:55px;width:9px;height:34px;background:#180b04;animation:leg .35s steps(2) infinite}
+.horse .l1{left:40px}.horse .l2{left:62px;animation-delay:.16s}.horse .l3{left:86px;animation-delay:.08s}.horse .l4{left:104px;animation-delay:.24s}
+@keyframes leg{0%{transform:rotate(24deg)}100%{transform:rotate(-24deg)}}
+.jockey{position:absolute;left:73px;top:2px;width:28px;height:32px;background:#d83c3c;box-shadow:0 8px #fff}
+.jockey:before{content:"";position:absolute;left:6px;top:-13px;width:16px;height:15px;background:#f0c08a}
+#ownerPanel{position:absolute;left:4vw;top:43vh;width:min(420px,44vw);z-index:10}
+#menu{position:absolute;right:4vw;top:43vh;width:min(390px,44vw);z-index:10}
+.stat{display:grid;grid-template-columns:1fr auto;gap:8px;margin:6px 0}
+.item{padding:6px 8px;margin:5px 0;border:1px solid transparent;font-size:17px}
+.item.active{border-color:var(--gold);background:#302000;color:var(--gold)}
+#press{position:absolute;left:50%;transform:translateX(-50%);bottom:8vh;color:#fff;font-size:24px;animation:blink 1s steps(2) infinite;z-index:20}
+@keyframes blink{50%{opacity:0}}
+#ticker{position:absolute;bottom:0;width:100%;height:38px;background:#000;border-top:3px solid var(--gold);z-index:40;overflow:hidden}
+#tickerText{position:absolute;white-space:nowrap;left:100%;top:8px;animation:marquee 18s linear infinite}
+@keyframes marquee{from{left:100%}to{left:-1800px}}
+#page,#demo{display:none;position:absolute;inset:0;background:#050816;z-index:80;padding:3vh 4vw;overflow:auto}
+#page.show,#demo.show{display:block}
+h2{color:var(--gold);text-shadow:2px 2px #000}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.box{border:2px solid #fff;background:var(--win);box-shadow:4px 4px #000;margin-bottom:16px}
+.box h3{margin:0;background:#1d4da1;padding:6px 10px;border-bottom:2px solid #fff}
+.content{padding:12px;line-height:1.7}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid #aaa;padding:5px;text-align:center}
+th{background:#302000;color:#fff}
+.btn{border:2px solid #fff;background:#302000;color:#fff;padding:7px 12px;margin:5px;cursor:pointer}
+.btn:hover{background:#624000;color:var(--gold)}
+.input{background:#000;color:#fff;border:2px solid #fff;padding:7px;margin:4px;width:220px}
+.paper{background:#fffaf0;color:#1a1a1a;padding:14px;line-height:1.8}
+.paper h3{color:#7a3d00;border-bottom:2px solid #7a3d00;background:none;padding:0}
+.good{color:var(--green);font-weight:bold}.bad{color:var(--red);font-weight:bold}.gold{color:var(--gold)}
+.racefield{position:relative;height:260px;background:linear-gradient(#081932 0 45%,#1d7c35 45% 100%);overflow:hidden}
+.demoHorse{position:absolute;left:-80px;width:76px;height:34px;background:#3a1c08;box-shadow:20px -10px #3a1c08,48px -14px #3a1c08,18px 18px #120804,50px 18px #120804;animation:demoRun 4s linear infinite}
+.demoHorse:nth-child(1){top:50%;animation-duration:3.8s}.demoHorse:nth-child(2){top:62%;animation-duration:4.4s;background:#222}.demoHorse:nth-child(3){top:74%;animation-duration:5s;background:#5c3210}
+@keyframes demoRun{to{left:110%}}
+#hint{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);color:#fff;animation:blink 1s steps(2) infinite;z-index:100}
+@media(max-width:850px){#ownerPanel,#menu{top:45vh;width:44vw}.grid{grid-template-columns:1fr}.item,.stat{font-size:12px}}
+</style>
+</head>
+<body>
+<div id="screen">
+<div id="title">
+ <div class="small">PC-98 STYLE REAL KEIBA OWNER GAME</div>
+ <div class="logo">DERBY OWNER<br>X96</div>
+ <div class="sub">現実競馬連動型・レトロ馬主シミュレーション</div>
+</div>
+
+<div id="rail"></div><div id="track"></div>
+<div class="horse">
+ <div class="tail"></div><div class="body"></div><div class="neck"></div><div class="head"></div>
+ <div class="leg l1"></div><div class="leg l2"></div><div class="leg l3"></div><div class="leg l4"></div><div class="jockey"></div>
+</div>
+
+<div id="ownerPanel" class="window">
+ <div class="bar">OWNER DATA</div>
+ <div class="inner">
+  <div class="stat"><span>OWNER</span><b id="ownerName">X96 STABLE</b></div>
+  <div class="stat"><span>FUNDS</span><b id="funds">30,000,000円</b></div>
+  <div class="stat"><span>HORSES</span><b id="horseCount">3頭</b></div>
+  <div class="stat"><span>WINS</span><b id="wins">0勝</b></div>
+  <div class="stat"><span>SAVE</span><b class="good">AUTO</b></div>
+  <p>↑↓で選択、Enterで決定。放置でデモ。</p>
+ </div>
+</div>
+
+<div id="menu" class="window">
+ <div class="bar">MAIN MENU</div>
+ <div class="inner">
+  <div class="item active">▶ NEW GAME</div>
+  <div class="item">　CONTINUE</div>
+  <div class="item">　STABLE</div>
+  <div class="item">　TRAINING</div>
+  <div class="item">　RACE DAY</div>
+  <div class="item">　X96 SIMULATION</div>
+  <div class="item">　NEWSPAPER</div>
+  <div class="item">　SAVE / LOAD</div>
+ </div>
+</div>
+
+<div id="press">PRESS START</div>
+<div id="ticker"><div id="tickerText">【X96スポーツ】本格PC-98風馬主ゲーム開幕　｜　厩舎・調教・レース・仮想馬券・新聞まで一枚物で搭載</div></div>
+
+<div id="demo"></div>
+<div id="page"></div>
+</div>
+
+<script>
+const KEY="derby_owner_x96_full_game_v1";
+let menuIndex=0,demoTimer=null,idleTimer=null,demoMode=false,pageMode=false;
+const items=[...document.querySelectorAll(".item")];
+
+let game={
+ owner:"X96 STABLE",
+ funds:30000000,
+ wins:0,
+ season:2026,
+ week:1,
+ horses:[
+  {name:"PIXEL ARROW",style:"先行",power:78,stamina:64,condition:80,form:"良好",memo:"スピード型。前で粘る。",wins:0},
+  {name:"RETRO WIND",style:"差し",power:70,stamina:72,condition:75,form:"上昇",memo:"終い堅実。展開待ち。",wins:0},
+  {name:"DOT IMPACT",style:"追込",power:66,stamina:82,condition:68,form:"普通",memo:"長く脚を使う穴馬。",wins:0}
+ ],
+ results:[],
+ tickets:[],
+ newspaper:""
+};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(game));renderOwner()}
+function load(){const r=localStorage.getItem(KEY);if(r){try{game=JSON.parse(r)}catch(e){}}renderOwner()}
+function yen(n){return Number(n||0).toLocaleString()+"円"}
+function renderOwner(){
+ ownerName.textContent=game.owner;
+ funds.textContent=yen(game.funds);
+ horseCount.textContent=game.horses.length+"頭";
+ wins.textContent=game.wins+"勝";
+}
+function resetGame(){
+ game={owner:"X96 STABLE",funds:30000000,wins:0,season:2026,week:1,horses:[
+  {name:"PIXEL ARROW",style:"先行",power:78,stamina:64,condition:80,form:"良好",memo:"スピード型。前で粘る。",wins:0},
+  {name:"RETRO WIND",style:"差し",power:70,stamina:72,condition:75,form:"上昇",memo:"終い堅実。展開待ち。",wins:0},
+  {name:"DOT IMPACT",style:"追込",power:66,stamina:82,condition:68,form:"普通",memo:"長く脚を使う穴馬。",wins:0}
+ ],results:[],tickets:[],newspaper:""};
+ save();
+}
+
+function openPage(title,html){
+ pageMode=true;demoMode=false;clearInterval(demoTimer);clearTimeout(idleTimer);
+ page.innerHTML=`<h2>${title}</h2>${html}<div id="hint">ESC / CLICK TO TITLE</div>`;
+ page.classList.add("show");
+}
+function closePage(){pageMode=false;page.classList.remove("show");resetIdle()}
+
+function pageNewGame(){
+ openPage("NEW GAME",`
+ <div class="grid">
+  <div class="box"><h3>馬主作成</h3><div class="content">
+   OWNER NAME<br><input class="input" id="newOwner" value="${game.owner}">
+   <br><button class="btn" onclick="game.owner=document.getElementById('newOwner').value||'X96 STABLE';resetGame();game.owner=document.getElementById('newOwner').value||'X96 STABLE';save();pageStable()">START</button>
+  </div></div>
+  <div class="box"><h3>物語</h3><div class="content">
+   あなたは小さな厩舎を率いる新米オーナー。<br>
+   所有馬を鍛え、現実レース風の舞台へ送り出し、新聞と馬柱を読みながらクラシック制覇を目指します。
+  </div></div>
+ </div>`);
+}
+function pageContinue(){load();pageStable()}
+
+function horseRows(){
+ return game.horses.map((h,i)=>`<tr><td>${i+1}</td><td>${h.name}</td><td>${h.style}</td><td>${h.power}</td><td>${h.stamina}</td><td>${h.condition}</td><td>${h.form}</td><td>${h.wins}</td></tr>`).join("");
+}
+function pageStable(){
+ openPage("STABLE",`
+ <div class="grid">
+  <div class="box"><h3>所有馬</h3><div class="content">
+   <table><tr><th>No</th><th>馬名</th><th>脚質</th><th>SP</th><th>ST</th><th>調子</th><th>気配</th><th>勝利</th></tr>${horseRows()}</table>
+  </div></div>
+  <div class="box"><h3>厩舎メモ</h3><div class="content">
+   資金：${yen(game.funds)}<br>
+   シーズン：${game.season}<br>
+   週：${game.week}<br><br>
+   <button class="btn" onclick="pageTraining()">調教へ</button>
+   <button class="btn" onclick="pageRaceDay()">レースへ</button>
+   <button class="btn" onclick="pageNewspaper()">新聞へ</button>
+  </div></div>
+ </div>`);
+}
+function pageTraining(){
+ openPage("TRAINING",`
+ <div class="box"><h3>調教メニュー</h3><div class="content">
+  <table><tr><th>馬</th><th>坂路</th><th>ウッド</th><th>軽め</th><th>休養</th></tr>
+  ${game.horses.map((h,i)=>`<tr><td>${h.name}</td>
+  <td><button class="btn" onclick="train(${i},'hill')">坂路</button></td>
+  <td><button class="btn" onclick="train(${i},'wood')">ウッド</button></td>
+  <td><button class="btn" onclick="train(${i},'light')">軽め</button></td>
+  <td><button class="btn" onclick="train(${i},'rest')">休養</button></td></tr>`).join("")}
+  </table>
+ </div></div>
+ <div class="box"><h3>現在の状態</h3><div class="content"><table><tr><th>馬名</th><th>SP</th><th>ST</th><th>調子</th><th>気配</th></tr>${game.horses.map(h=>`<tr><td>${h.name}</td><td>${h.power}</td><td>${h.stamina}</td><td>${h.condition}</td><td>${h.form}</td></tr>`).join("")}</table></div></div>`);
+}
+function train(i,type){
+ const h=game.horses[i];
+ if(type==="hill"){h.power+=rand(1,4);h.condition-=rand(3,8);h.form="気合乗る"}
+ if(type==="wood"){h.stamina+=rand(1,4);h.condition-=rand(2,6);h.form="息遣い良好"}
+ if(type==="light"){h.condition+=rand(1,5);h.form="落ち着きあり"}
+ if(type==="rest"){h.condition+=rand(5,12);h.form="リフレッシュ"}
+ h.condition=Math.max(20,Math.min(100,h.condition));
+ h.power=Math.min(120,h.power);h.stamina=Math.min(120,h.stamina);
+ game.week++;save();pageTraining();
+}
+
+function pageRaceDay(){
+ openPage("RACE DAY",`
+ <div class="grid">
+  <div class="box"><h3>出走登録</h3><div class="content">
+   <table><tr><th>馬名</th><th>脚質</th><th>総合</th><th>出走</th></tr>
+   ${game.horses.map((h,i)=>`<tr><td>${h.name}</td><td>${h.style}</td><td>${horseScore(h)}</td><td><button class="btn" onclick="runRace(${i})">出走</button></td></tr>`).join("")}
+   </table>
+  </div></div>
+  <div class="box"><h3>レース概要</h3><div class="content">
+   X96記念・芝2000m<br>
+   1着賞金：5,000,000円<br>
+   2着賞金：2,000,000円<br>
+   3着賞金：1,000,000円<br><br>
+   調子と能力で着順を判定します。
+  </div></div>
+ </div>
+ <div class="box"><h3>レース場</h3><div class="racefield"><div class="demoHorse"></div><div class="demoHorse"></div><div class="demoHorse"></div></div></div>`);
+}
+function horseScore(h){return Math.floor(h.power*0.52+h.stamina*0.28+h.condition*0.20)}
+function runRace(i){
+ const h=game.horses[i];
+ const score=horseScore(h)+rand(-20,20);
+ let place=score>88?1:score>76?2:score>64?3:rand(4,9);
+ let prize=place===1?5000000:place===2?2000000:place===3?1000000:0;
+ game.funds+=prize;
+ if(place===1){game.wins++;h.wins++}
+ h.condition=Math.max(30,h.condition-rand(8,18));
+ h.form=place<=3?"好走反動あり":"次走巻き返し";
+ game.results.unshift({horse:h.name,place,prize,date:new Date().toLocaleString("ja-JP")});
+ save();
+ generateNewspaper();
+ openPage("RACE RESULT",`
+ <div class="grid">
+  <div class="box"><h3>結果</h3><div class="content">
+   ${h.name} は <b class="${place<=3?'good':'bad'}">${place}着</b>。<br>
+   獲得賞金：${yen(prize)}<br>
+   現在資金：${yen(game.funds)}<br><br>
+   ${place===1?"見事な勝利！オーナーの評価が上がりました。":place<=3?"馬券圏内の好走。次走も楽しみです。":"今回は展開が向かず。次走に期待です。"}
+  </div></div>
+  <div class="box"><h3>回顧</h3><div class="content">${reviewText(h,place)}</div></div>
+ </div>
+ <button class="btn" onclick="pageStable()">厩舎へ戻る</button>`);
+}
+
+function pageSimulation(){
+ const odds=[
+  {type:"ワイド",combo:"PIXEL ARROW-RETRO WIND",odds:3.2,ev:1.22,stake:300},
+  {type:"馬連",combo:"PIXEL ARROW-DOT IMPACT",odds:8.4,ev:1.36,stake:200},
+  {type:"三連複",combo:"3頭BOX",odds:14.8,ev:1.42,stake:100}
+ ];
+ game.tickets=odds;save();
+ openPage("X96 SIMULATION",`
+ <div class="grid">
+  <div class="box"><h3>仮想買い目</h3><div class="content">
+   <table><tr><th>券種</th><th>組み合わせ</th><th>オッズ</th><th>EV</th><th>金額</th></tr>
+   ${odds.map(o=>`<tr><td>${o.type}</td><td>${o.combo}</td><td>${o.odds}</td><td>${o.ev}</td><td>${yen(o.stake)}</td></tr>`).join("")}
+   </table>
+   <button class="btn" onclick="settleSim()">仮想精算</button>
+  </div></div>
+  <div class="box"><h3>説明</h3><div class="content">
+   実購入なしのゲーム内シミュレーションです。<br>
+   3分前EVを見て買い目を仮想固定する想定です。
+  </div></div>
+ </div>`);
+}
+function settleSim(){
+ let stake=game.tickets.reduce((s,t)=>s+t.stake,0);
+ let hit=Math.random()<0.45;
+ let pay=hit?Math.floor(stake*(1.2+Math.random()*2.8)):0;
+ let profit=pay-stake;
+ game.funds+=profit;
+ game.results.unshift({horse:"X96仮想馬券",place:hit?"的中":"不的中",prize:profit,date:new Date().toLocaleString("ja-JP")});
+ save();
+ openPage("X96 SIMULATION RESULT",`
+ <div class="box"><h3>仮想精算</h3><div class="content">
+  投資：${yen(stake)}<br>
+  払戻：${yen(pay)}<br>
+  収支：<b class="${profit>=0?'good':'bad'}">${profit>=0?'+':''}${yen(profit)}</b><br>
+  現在資金：${yen(game.funds)}<br><br>
+  ${hit?"いやあ、EVが効きましたね。こういう時に馬券は面白い。":"今回は噛み合わず。次に歪みを拾いましょう。"}
+ </div></div>`);
+}
+
+function generateNewspaper(){
+ const sorted=[...game.horses].sort((a,b)=>horseScore(b)-horseScore(a));
+ const top=sorted[0],hole=sorted[sorted.length-1];
+ game.newspaper=`
+ <div class="paper">
+  <h3>【X96競馬新聞】今週の一面</h3>
+  <p><b>本命は◎${top.name}</b>。総合力では一枚上で、調子さえ維持できれば中心です。</p>
+  <p>穴で面白いのは☆${hole.name}。数字だけ見ると地味ですが、展開が向いたときにひょいと来るタイプ。</p>
+  <h3>馬柱</h3>
+  <table><tr><th>印</th><th>馬名</th><th>脚質</th><th>SP</th><th>ST</th><th>調子</th><th>判定</th></tr>
+  ${sorted.map((h,i)=>`<tr><td>${["◎","○","☆"][i]||"△"}</td><td>${h.name}</td><td>${h.style}</td><td>${h.power}</td><td>${h.stamina}</td><td>${h.condition}</td><td>${i===0?"軸":i===1?"相手":"穴"}</td></tr>`).join("")}
+  </table>
+  <h3>展開予想</h3>
+  <p>先行馬が楽に運べば前残り。差し馬はペースが流れた時に浮上します。馬場と隊列の読みが勝負の分かれ目です。</p>
+  <h3>買い方指南</h3>
+  <p>堅く行くなら◎から。遊びを入れるなら☆をワイドか三連複に一枚。理屈半分、勘半分。ただし勘にも根拠はあります。</p>
+ </div>`;
+ save();
+}
+function pageNewspaper(){generateNewspaper();openPage("NEWSPAPER",`<div class="box"><h3>競馬新聞</h3><div class="content">${game.newspaper}</div></div>`)}
+
+function pageSaveLoad(){
+ openPage("SAVE / LOAD",`
+ <div class="grid">
+  <div class="box"><h3>保存</h3><div class="content">
+   <button class="btn" onclick="save();alert('保存しました')">SAVE</button>
+   <button class="btn" onclick="load();alert('復元しました');pageStable()">LOAD</button>
+   <button class="btn" onclick="if(confirm('初期化しますか？')){resetGame();pageStable()}">RESET</button>
+  </div></div>
+  <div class="box"><h3>履歴</h3><div class="content">
+   <table><tr><th>日時</th><th>内容</th><th>結果</th><th>賞金/収支</th></tr>
+   ${game.results.slice(0,8).map(r=>`<tr><td>${r.date}</td><td>${r.horse}</td><td>${r.place}</td><td>${yen(r.prize)}</td></tr>`).join("")}
+   </table>
+  </div></div>
+ </div>`);
+}
+
+function reviewText(h,place){
+ if(place===1)return `${h.name}は好位から抜け出し完勝。これは次走も楽しみです。`;
+ if(place<=3)return `${h.name}は最後までしぶとく脚を使いました。勝ち切れないまでも内容は上々。`;
+ return `${h.name}は展開が向きませんでした。調子を整えて巻き返しです。`;
+}
+
+function openSelected(){
+ const s=items[menuIndex].textContent.replace("▶","").trim();
+ if(s==="NEW GAME")pageNewGame();
+ if(s==="CONTINUE")pageContinue();
+ if(s==="STABLE")pageStable();
+ if(s==="TRAINING")pageTraining();
+ if(s==="RACE DAY")pageRaceDay();
+ if(s==="X96 SIMULATION")pageSimulation();
+ if(s==="NEWSPAPER")pageNewspaper();
+ if(s==="SAVE / LOAD")pageSaveLoad();
+}
+
+function moveMenu(d){
+ items[menuIndex].classList.remove("active");
+ items[menuIndex].textContent="　"+items[menuIndex].textContent.replace("▶ ","").trim();
+ menuIndex=(menuIndex+d+items.length)%items.length;
+ items[menuIndex].classList.add("active");
+ items[menuIndex].textContent="▶ "+items[menuIndex].textContent.replace("▶ ","").trim();
+}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+const demos=[
+ `<h2>DEMO - RACE</h2><div class="grid"><div class="box"><h3>レース</h3><div class="racefield"><div class="demoHorse"></div><div class="demoHorse"></div><div class="demoHorse"></div></div></div><div class="box"><h3>実況</h3><div class="content">各馬一斉にスタート。<br>PIXEL ARROWが先手。<br>RETRO WINDが外から追う。<br><br>直線、歓声が上がる！</div></div></div><div id="hint">PRESS ANY KEY</div>`,
+ `<h2>DEMO - STABLE</h2><div class="box"><h3>厩舎</h3><div class="content"><table><tr><th>馬名</th><th>脚質</th><th>状態</th></tr><tr><td>PIXEL ARROW</td><td>先行</td><td>良好</td></tr><tr><td>RETRO WIND</td><td>差し</td><td>上昇</td></tr></table></div></div><div id="hint">PRESS ANY KEY</div>`,
+ `<h2>DEMO - NEWSPAPER</h2><div class="box"><h3>新聞</h3><div class="content"><div class="paper"><h3>一面展望</h3><p>本命はPIXEL ARROW。穴はDOT IMPACT。展開ひとつで面白い。</p></div></div></div><div id="hint">PRESS ANY KEY</div>`
+];
+function startDemo(){demoMode=true;demo.innerHTML=demos[rand(0,demos.length-1)];demo.classList.add("show");demoTimer=setInterval(()=>demo.innerHTML=demos[rand(0,demos.length-1)],6500)}
+function stopDemo(){demoMode=false;demo.classList.remove("show");clearInterval(demoTimer);resetIdle()}
+function resetIdle(){if(pageMode)return;if(demoMode){stopDemo();return}clearTimeout(idleTimer);idleTimer=setTimeout(startDemo,9000)}
+
+document.addEventListener("keydown",e=>{
+ if(pageMode){if(e.key==="Escape"||e.key==="Enter"){pageMode=false;page.classList.remove("show");resetIdle()}return}
+ if(demoMode){stopDemo();return}
+ if(e.key==="ArrowDown")moveMenu(1);
+ if(e.key==="ArrowUp")moveMenu(-1);
+ if(e.key==="Enter"){openSelected();pageMode=true}
+ resetIdle();
+});
+document.addEventListener("click",()=>{if(pageMode){pageMode=false;page.classList.remove("show");resetIdle()}else resetIdle()});
+load();generateNewspaper();resetIdle();
+</script>
+</body>
+</html>
